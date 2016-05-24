@@ -1,1 +1,0 @@
-./loadmaster.sh
