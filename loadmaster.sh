@@ -9,33 +9,52 @@ CALLDIR="`dirname "$0"`"
 
 STARTNAME="startcontainer.sh"
 
-loadcontainer () {
 
-	echo "I am the loadmaster!"
+
+readloadingplan () {
+
+	echo "I am in mode $MODE!"
 
 	echo "$CALLDIR"
 
-	[ -L "$CALLDIR/$STARTNAME" ] || ln -s "$CALLDIR/$CALLNAME" "$CALLDIR/$STARTNAME"
-
-
 
 }
 
-shipcontainer () {
 
-	echo "Ship Ahoi!"
+checkprerequisites () {
+
+	# Is rsync installed?
+
+	# Is the loadingplan accessible?
+
+	# Is the link present?
+	if [ ! -L "$CALLDIR/$STARTNAME" ] ;
+	then
+		local DIRSTASH="`cd`"
+		cd "$CALLDIR"
+		ln -s "$CALLNAME" "$STARTNAME"
+		cd "$DIRSTASH"
+	fi
+
 }
+
+
+checkprerequisites
+
 
 
 case "$CALLNAME" in 
 	"loadmaster.sh")
-		loadcontainer
+		MODE=loadit
 	;;
 	"$STARTNAME")
-		shipcontainer
+		MODE=shipit
 	;;
 	*)
+		echo "ERROR: Unknown callname \"$CALLNAME\". Aborting!"
+		exit -1
 	;;
 esac
 
+readloadingplan
 
