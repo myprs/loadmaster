@@ -13,22 +13,95 @@ STARTNAME="startcontainer.sh"
 DEFAULTLOADINGPLAN="/etc/loadmaster/loading.plan"
 
 
+parse_SETVAR_line () {
+
+	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_SETVAR_line\" should never be calles with an empty parameterset. This should never happen by design. aborting!"; exit -200 ; }
+
+
+	case "$MODE" in
+		"loadit")
+			echo "tobeimpemented: $1; mode \"$MODE\""
+		;;
+		"shipit")
+			echo "tobeimpemented: $1; mode \"$MODE\""
+		;;
+		*)
+			echo "ERROR: internal error: in function \"parse_SETVAR_LINE\" variable mode did have an unknown value of \"$MODE\". Aborting!"
+		;;
+	esac
+	
+}
+
+parse_RENEWFILE_line () {
+
+	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_RENEWFILE_line\" should never be calles with an empty parameterset. This should never happen by design. aborting!"; exit -200 ; }
+	
+	case "$MODE" in
+		"loadit")
+			echo "tobeimpemented: $1; mode \"$MODE\""
+		;;
+		"shipit")
+			echo "tobeimpemented: $1; mode \"$MODE\""
+		;;
+		*)
+			echo "ERROR: internal error: in function \"parse_SETVAR_LINE\" variable mode did have an unknown value of \"$MODE\". Aborting!"
+		;;
+	esac
+	
+}
+
+parse_PUBLISHDIR_line () {
+
+	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_PUBLISHDIR_line\" should never be calles with an empty parameterset. This should never happen by design. aborting!"; exit -200 ; }
+	
+	case "$MODE" in
+		"loadit")
+			echo "tobeimpemented: $1; mode \"$MODE\""
+		;;
+		"shipit")
+			echo "tobeimpemented: $1; mode \"$MODE\""
+		;;
+		*)
+			echo "ERROR: internal error: in function \"parse_SETVAR_LINE\" variable mode did have an unknown value of \"$MODE\". Aborting!"
+		;;
+	esac
+	
+}
+
+parse_STARTCMD_line () {
+
+	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_STARTCMD_line\" should never be calles with an empty parameterset. This should never happen by design. aborting!"; exit -200 ; }
+	
+	case "$MODE" in
+		"loadit")
+			echo "tobeimpemented: $1; mode \"$MODE\""
+		;;
+		"shipit")
+			echo "tobeimpemented: $1; mode \"$MODE\""
+		;;
+		*)
+			echo "ERROR: internal error: in function \"parse_SETVAR_LINE\" variable mode did have an unknown value of \"$MODE\". Aborting!"
+		;;
+	esac
+	
+}
+
 processline () {
 
-	[ -z "$1" ] && { echo "ERROR: Internal Error: Function processwline should never be calles with an empty parameterset. This should never happen by design. aborting!"; exoit -100 ; }
+	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"processline\" should never be calles with an empty parameterset. This should never happen by design. aborting!"; exit -100 ; }
 
 	case "$1" in 
 		"SETVAR")
-			echo "tobeimpemented: $1"
+			parse_SETVAR_line $*
 		;;
 		"RENEWFILE")
-			echo "tobeimpemented: $1"
+			parse_RENEWFILE_line $*
 		;;
 		"PUBLISHDIR")
-			echo "tobeimpemented: $1"
+			parse_PUBLISHDIR_line $*
 		;;
 		"STARTCMD")
-			echo "tobeimpemented: $1"
+			parse_STARTCMD_line $*
 		;;
 		*)
 			echo "ERROR: Unknown command \"$1\" in loadingplan file \"$LOADINGPLAN\" on line $LINECOUNTER. Aborting! "
