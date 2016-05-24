@@ -34,7 +34,7 @@ parse_SETVAR_line () {
 
 parse_RENEWFILE_line () {
 
-	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_RENEWFILE_line\" should never be calles with an empty parameterset. This should never happen by design. aborting!"; exit -200 ; }
+	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_RENEWFILE_line\" should never be calles with an empty parameterset. This should never happen by design. aborting!"; exit -210 ; }
 	
 	case "$MODE" in
 		"loadit")
@@ -52,7 +52,7 @@ parse_RENEWFILE_line () {
 
 parse_PUBLISHDIR_line () {
 
-	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_PUBLISHDIR_line\" should never be calles with an empty parameterset. This should never happen by design. aborting!"; exit -200 ; }
+	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_PUBLISHDIR_line\" should never be calles with an empty parameterset. This should never happen by design. aborting!"; exit -220 ; }
 	
 	case "$MODE" in
 		"loadit")
@@ -70,19 +70,31 @@ parse_PUBLISHDIR_line () {
 
 parse_STARTCMD_line () {
 
-	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_STARTCMD_line\" should never be calles with an empty parameterset. This should never happen by design. aborting!"; exit -200 ; }
+	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_STARTCMD_line\" should never be calles with an empty parameterset. This should never happen by design. aborting!"; exit -230 ; }
 	
 	case "$MODE" in
 		"loadit")
-			echo "tobeimpemented: $1; mode \"$MODE\""
+			[ $DEBUG -ge 3 ] && echo "DEBUG3: Entered $1; mode \"$MODE\""
 		;;
 		"shipit")
-			echo "tobeimpemented: $1; mode \"$MODE\""
+			[ $DEBUG -ge 3 ] && echo "DEBUG3: Entered $1; mode \"$MODE\""
 		;;
 		*)
 			echo "ERROR: internal error: in function \"parse_SETVAR_LINE\" variable mode did have an unknown value of \"$MODE\". Aborting!"
 		;;
 	esac
+
+	if [ -n "$STARTCMD" ] ; 
+	then
+
+		# this seems not to be the fist invocation, so exit
+		echo "ERROR: Second definition of a STARTCMD line in loadingplan \"$LOADINGPLAN\" on line $LINECOUNTER found, but only up to one is allowed. Aborting! "
+		exit 231
+	fi
+
+	shift 1
+	STARTCMD="$*"
+	[ $DEBUG -ge 2 ] && echo "DEBUG2: STARTCMD was set to \"$STARTCMD\""
 	
 }
 
@@ -170,6 +182,20 @@ checkprerequisites () {
 }
 
 
+runstartcmd () {
+
+	
+	if [ "$MODE" = "loadit" ] ; 
+	then
+		# on loadit we just issue a warning if we do not have defined a STARTCMD
+		[ -z "$STARTCMD" ] && echo "WARNING: You seem not to have any STARTCMD line in your loadingplan! Please note that this is OK as long as you take care of starting a process in your container in your dockerfile. But please make sure that you also run loadmaster through the \"$STARTNAME\" link to make sure on every start of your container that defaults are moved and initialisations are done! Otherwise using loadmaster dows not make any sense. Please see the docs on loadmaster for further information on how to use the script."
+	else
+		# run the command 
+		{ $STARTCMD ; }
+	fi 
+
+}
+
 checkprerequisites $1
 
 
@@ -189,3 +215,5 @@ esac
 
 readloadingplan
 
+
+runstartcmd

@@ -13,7 +13,8 @@ RENEWFILE File Method
 PUBLISHDIR Sourcedir Destdir
 
 
-STARTCMD Cmd [Param [Param [...]]]
+#STARTCMD Cmd [Param [Param [...]]]
+STARTCMD echo "Hallo World"
 
 
 
