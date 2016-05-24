@@ -15,9 +15,9 @@ DEFAULTLOADINGPLAN="/etc/loadmaster/loading.plan"
 
 readloadingplan () {
 
-	echo "I am in mode $MODE!"
+	[ $DEBUG -ge 1 ] && echo "DEBUG: I am in mode $MODE!"
 
-	echo "$CALLDIR"
+	[ $DEBUG -ge 1 ] && echo "DEBUG: Calldir is \"$CALLDIR\""
 
 
 }
@@ -30,7 +30,7 @@ checkprerequisites () {
 
 	# Is the loadingplan accessible?
 	LOADINGPLAN=${1:-"$DEFAULTLOADINGPLAN"}
-	[ $DEBUG -ge 1 ] && echo "Loadingplan is \"$LOADINGPLAN\"."
+	[ $DEBUG -ge 1 ] && echo "DEBUG: Loadingplan is \"$LOADINGPLAN\"."
 	
 	[ -r "$LOADINGPLAN" ] || { echo "ERROR: Loadingplan \"$LOADINGPLAN\" is not accessible. Not existent file or no read rights? Aborting!" ; exit 3 ; }
 
@@ -39,9 +39,9 @@ checkprerequisites () {
 	then
 		local DIRSTASH="`cd`"
 		cd "$CALLDIR"
-		[ $DEBUG -ge 1 ] && echo "Creating link \"$STARTNAME\" in directory \"$CALLDIR\"."
+		[ $DEBUG -ge 1 ] && echo "DEBUG: Creating link \"$STARTNAME\" in directory \"$CALLDIR\"."
 		ln -s "$CALLNAME" "$STARTNAME"
-		[ $DEBUG -ge 1 ] && echo "Returning to original workdir \"$DIRSTASH\"."
+		[ $DEBUG -ge 1 ] && echo "DEBUG: Returning to original workdir \"$DIRSTASH\"."
 		cd "$DIRSTASH"
 	fi
 
