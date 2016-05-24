@@ -31,7 +31,7 @@ processline () {
 			echo "tobeimpemented: $1"
 		;;
 		*)
-			echo "ERROR: Unknown command \"$1\" in loadingplan \"$LOADINGPLAN\". Aborting! "
+			echo "ERROR: Unknown command \"$1\" in loadingplan file \"$LOADINGPLAN\" on line $LINECOUNTER. Aborting! "
 			exit 101
 		;;
 	esac
@@ -51,12 +51,22 @@ readloadingplan () {
 	ORIGIFS="$IFS"
 	IFS="
 "
-	for  LINE in $( "$GREPBIN" -v "^[[:space:]]*#.*" "$LOADINGPLAN" | "$GREPBIN" -v "^[[:space:]]*$" ) ;
+	LINECOUNTER=0
+	while read  LINE; 
 	do
+		LINECOUNTER=$(( $LINECOUNTER+1 ))
+		
+		[ $DEBUG -ge 2 ] && echo "DEBUG2: Processing line no $LINECOUNTER: \"$LINE\""
+		
+		# decomment line
+		LINE=`echo "$LINE"|"$GREPBIN" -v "^[[:space:]]*#.*" | "$GREPBIN" -v "^[[:space:]]*$"`
 		IFS="$ORIGIFS"
-		[ $DEBUG -ge 2 ] && echo "DEBUG2: Processing line: \"$LINE\""
-		processline $LINE
-	done 
+		
+		if [ -n "$LINE" ]; 
+		then
+			processline $LINE
+		fi
+	done <"$LOADINGPLAN"
 
 
 }
