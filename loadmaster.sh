@@ -1,14 +1,16 @@
 #!/bin/sh
 
 
-RSYNC="/bin/rsync"
+DEBUG=${DEBUG:-0}
+
+RSYNCBIN="/usr/bin/rsync"
 
 
 CALLNAME="`basename "$0"`"
 CALLDIR="`dirname "$0"`"
 
 STARTNAME="startcontainer.sh"
-
+DEFAULTLOADINGPLAN="/etc/loadmaster/loading.plan"
 
 
 readloadingplan () {
@@ -24,22 +26,29 @@ readloadingplan () {
 checkprerequisites () {
 
 	# Is rsync installed?
+	[ -x "$RSYNCBIN" ] || { echo "ERROR: rsync binary \"$RSYNCBIN\"not found. Aborting!"; exit 2; } 
 
 	# Is the loadingplan accessible?
+	LOADINGPLAN=${1:-"$DEFAULTLOADINGPLAN"}
+	[ $DEBUG -ge 1 ] && echo "Loadingplan is \"$LOADINGPLAN\"."
+	
+	[ -r "$LOADINGPLAN" ] || { echo "ERROR: Loadingplan \"$LOADINGPLAN\" is not accessible. Not existent file or no read rights? Aborting!" ; exit 3 ; }
 
 	# Is the link present?
 	if [ ! -L "$CALLDIR/$STARTNAME" ] ;
 	then
 		local DIRSTASH="`cd`"
 		cd "$CALLDIR"
+		[ $DEBUG -ge 1 ] && echo "Creating link \"$STARTNAME\" in directory \"$CALLDIR\"."
 		ln -s "$CALLNAME" "$STARTNAME"
+		[ $DEBUG -ge 1 ] && echo "Returning to original workdir \"$DIRSTASH\"."
 		cd "$DIRSTASH"
 	fi
 
 }
 
 
-checkprerequisites
+checkprerequisites $1
 
 
 
@@ -52,7 +61,7 @@ case "$CALLNAME" in
 	;;
 	*)
 		echo "ERROR: Unknown callname \"$CALLNAME\". Aborting!"
-		exit -1
+		exit 1
 	;;
 esac
 
