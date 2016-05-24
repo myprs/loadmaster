@@ -4,7 +4,7 @@
 DEBUG=${DEBUG:-0}
 
 RSYNCBIN="/usr/bin/rsync"
-
+GREPBIN="/bin/grep"
 
 CALLNAME="`basename "$0"`"
 CALLDIR="`dirname "$0"`"
@@ -13,11 +13,50 @@ STARTNAME="startcontainer.sh"
 DEFAULTLOADINGPLAN="/etc/loadmaster/loading.plan"
 
 
+processline () {
+
+	[ -z "$1" ] && { echo "ERROR: Internal Error: Function processwline should never be calles with an empty parameterset. This should never happen by design. aborting!"; exoit -100 ; }
+
+	case "$1" in 
+		"SETVAR")
+			echo "tobeimpemented: $1"
+		;;
+		"RENEWFILE")
+			echo "tobeimpemented: $1"
+		;;
+		"PUBLISHDIR")
+			echo "tobeimpemented: $1"
+		;;
+		"STARTCMD")
+			echo "tobeimpemented: $1"
+		;;
+		*)
+			echo "ERROR: Unknown command \"$1\" in loadingplan \"$LOADINGPLAN\". Aborting! "
+			exit 101
+		;;
+	esac
+
+}
+
 readloadingplan () {
 
-	[ $DEBUG -ge 1 ] && echo "DEBUG: I am in mode $MODE!"
+	[ $DEBUG -ge 2 ] && echo "DEBUG: I am in mode $MODE!"
 
-	[ $DEBUG -ge 1 ] && echo "DEBUG: Calldir is \"$CALLDIR\""
+	[ $DEBUG -ge 2 ] && echo "DEBUG: Calldir is \"$CALLDIR\""
+
+
+	# reading in the file and calling procline function per line
+
+
+	ORIGIFS="$IFS"
+	IFS="
+"
+	for  LINE in $( "$GREPBIN" -v "^[[:space:]]*#.*" "$LOADINGPLAN" | "$GREPBIN" -v "^[[:space:]]*$" ) ;
+	do
+		IFS="$ORIGIFS"
+		[ $DEBUG -ge 2 ] && echo "DEBUG2: Processing line: \"$LINE\""
+		processline $LINE
+	done 
 
 
 }

@@ -1,0 +1,22 @@
+# this is an comment
+ # this also is a comment indeted by an single space
+  # this also is a comment indeted by multiple spaces
+	# this is a comment indeted by an tab
+	 # this is a comment indeted by an tab and an space
+
+
+SETVAR Varname Value
+
+
+RENEWFILE File Method
+
+
+PUBLISHDIR Sourcedir Destdir
+
+
+STARTCMD Cmd [Param [Param [...]]]
+
+
+
+   
+  			
