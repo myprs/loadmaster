@@ -15,7 +15,7 @@ DEFAULTLOADINGPLAN="/etc/loadmaster/loading.plan"
 
 parse_SETVAR_line () {
 
-	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_SETVAR_line\" should never be calles with an empty parameterset. This should never happen by design. aborting!"; exit -200 ; }
+	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_SETVAR_line\" should never be called with an empty parameter set. This should never happen by design. Aborting!"; exit -200 ; }
 
 
 	case "$MODE" in
@@ -52,7 +52,7 @@ parse_RENEWFILE_line () {
 
 parse_PUBLISHDIR_line () {
 
-	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_PUBLISHDIR_line\" should never be calles with an empty parameterset. This should never happen by design. aborting!"; exit -220 ; }
+	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_PUBLISHDIR_line\" should never be called with an empty parameter set. This should never happen by design. aborting!"; exit -220 ; }
 	
 	case "$MODE" in
 		"loadit")
@@ -70,7 +70,7 @@ parse_PUBLISHDIR_line () {
 
 parse_STARTCMD_line () {
 
-	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_STARTCMD_line\" should never be calles with an empty parameterset. This should never happen by design. aborting!"; exit -230 ; }
+	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_STARTCMD_line\" should never be called with an empty parameter set. This should never happen by design. aborting!"; exit -230 ; }
 	
 	case "$MODE" in
 		"loadit")
@@ -100,7 +100,7 @@ parse_STARTCMD_line () {
 
 processline () {
 
-	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"processline\" should never be calles with an empty parameterset. This should never happen by design. aborting!"; exit -100 ; }
+	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"processline\" should never be called with an empty parameter set. This should never happen by design. aborting!"; exit -100 ; }
 
 	case "$1" in 
 		"SETVAR")
@@ -143,7 +143,7 @@ readloadingplan () {
 		
 		[ $DEBUG -ge 2 ] && echo "DEBUG2: Processing line no $LINECOUNTER: \"$LINE\""
 		
-		# decomment line
+		# uncomment line
 		LINE=`echo "$LINE"|"$GREPBIN" -v "^[[:space:]]*#.*" | "$GREPBIN" -v "^[[:space:]]*$"`
 		IFS="$ORIGIFS"
 		
@@ -188,7 +188,7 @@ runstartcmd () {
 	if [ "$MODE" = "loadit" ] ; 
 	then
 		# on loadit we just issue a warning if we do not have defined a STARTCMD
-		[ -z "$STARTCMD" ] && echo "WARNING: You seem not to have any STARTCMD line in your loadingplan! Please note that this is OK as long as you take care of starting a process in your container in your dockerfile. But please make sure that you also run loadmaster through the \"$STARTNAME\" link to make sure on every start of your container that defaults are moved and initialisations are done! Otherwise using loadmaster dows not make any sense. Please see the docs on loadmaster for further information on how to use the script."
+		[ -z "$STARTCMD" ] && echo "WARNING: You seem not to have any STARTCMD line in your loadingplan! Please note that this is OK as long as you take care of starting a process in your container in your dockerfile. But please make sure that you also run loadmaster through the \"$STARTNAME\" link to make sure on every start of your container that defaults are moved and initialisations are done! Otherwise using loadmaster does not make any sense. Please see the docs on loadmaster for further information on how to use the script."
 	else
 		# run the command 
 		{ $STARTCMD ; }
@@ -217,3 +217,4 @@ readloadingplan
 
 
 runstartcmd
+

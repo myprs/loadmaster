@@ -1,9 +1,10 @@
 # this is an comment
- # this also is a comment indeted by an single space
-  # this also is a comment indeted by multiple spaces
-	# this is a comment indeted by an tab
-	 # this is a comment indeted by an tab and an space
+ # this also is a comment indented by an single space
+  # this also is a comment indented by multiple spaces
+	# this is a comment indented by an tab
+	 # this is a comment indented by an tab and an space
 
+# not implemented yet, just for testing purposes
 SETVAR Varname Value
 
 
@@ -12,7 +13,11 @@ RENEWFILE File Method
 
 PUBLISHDIR Sourcedir Destdir
 
-
+# Define a command that will be run in the container at the end, when all other tasks are done.  
+# This is meant to start the actual container functionality as usually done in docker containers.
+# This operator can only be defined once in a loadingplan. Multiple definitions will abort loadmaster
+# already at image creation time.
+# This definition might be omitted, but this is strongly discouraged.
 #STARTCMD Cmd [Param [Param [...]]]
 STARTCMD echo "Hallo World"
 
