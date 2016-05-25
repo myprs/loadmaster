@@ -12,8 +12,11 @@ SETVAR Varname Value
 RENEWFILE /tmp/renewme touch /tmp/renewme
 
 
-
 PUBLISHDIR Sourcedir Destdir
+
+
+PUBLISHFILE Sourcefile Destdir
+
 
 # Define a command that will be run in the container at the end, when all other tasks are done.  
 # This is meant to start the actual container functionality as usually done in docker containers.

@@ -65,7 +65,25 @@ parse_RENEWFILE_line () {
 			fi
 		;;
 		*)
-			echo "ERROR: internal error: in function \"parse_SETVAR_LINE\" variable mode did have an unknown value of \"$MODE\". Aborting!"
+			echo "ERROR: internal error: in function \"parse_RENEWFILE_line\" variable mode did have an unknown value of \"$MODE\". Aborting!"
+		;;
+	esac
+	
+}
+
+parse_PUBLISHFILE_line () {
+
+	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_PUBLISHFILE_line\" should never be called with an empty parameter set. This should never happen by design. aborting!"; exit -220 ; }
+	
+	case "$MODE" in
+		"loadit")
+			echo "tobeimpemented: $1; mode \"$MODE\""
+		;;
+		"shipit")
+			echo "tobeimpemented: $1; mode \"$MODE\""
+		;;
+		*)
+			echo "ERROR: internal error: in function \"parse_PUBLISHFILE_line\" variable mode did have an unknown value of \"$MODE\". Aborting!"
 		;;
 	esac
 	
@@ -83,7 +101,7 @@ parse_PUBLISHDIR_line () {
 			echo "tobeimpemented: $1; mode \"$MODE\""
 		;;
 		*)
-			echo "ERROR: internal error: in function \"parse_SETVAR_LINE\" variable mode did have an unknown value of \"$MODE\". Aborting!"
+			echo "ERROR: internal error: in function \"parse_PUBLISHDIR_line\" variable mode did have an unknown value of \"$MODE\". Aborting!"
 		;;
 	esac
 	
@@ -101,7 +119,7 @@ parse_STARTCMD_line () {
 			[ $DEBUG -ge 3 ] && echo "DEBUG3: Entered $1; mode \"$MODE\""
 		;;
 		*)
-			echo "ERROR: internal error: in function \"parse_SETVAR_LINE\" variable mode did have an unknown value of \"$MODE\". Aborting!"
+			echo "ERROR: internal error: in function \"parse_STARTCMD_line\" variable mode did have an unknown value of \"$MODE\". Aborting!"
 		;;
 	esac
 
@@ -129,6 +147,9 @@ processline () {
 		;;
 		"RENEWFILE")
 			parse_RENEWFILE_line $*
+		;;
+		"PUBLISHFILE")
+			parse_PUBLISHFILE_line $*
 		;;
 		"PUBLISHDIR")
 			parse_PUBLISHDIR_line $*
