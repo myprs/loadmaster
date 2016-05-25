@@ -35,13 +35,34 @@ parse_SETVAR_line () {
 parse_RENEWFILE_line () {
 
 	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_RENEWFILE_line\" should never be calles with an empty parameterset. This should never happen by design. aborting!"; exit -210 ; }
+
+	# parse 
+	shift
+	local FILENAME="$1"
+	[ -z "$FILENAME" ] && { echo "ERROR: no filename given in RENEWFILE statement in line $LINECOUNTER. Aborting!"; exit 211; }
+	[ $DEBUG -ge 2 ] && echo "DEBUG2: RENEWFILE FILENAME was set to \"$FILENAME\""
+
+	shift
+	local COMMAND="$*"
+	[ -z "$COMMAND" ] && { echo "ERROR: no command given in RENEWFILE statement in line $LINECOUNTER. Aborting!"; exit 212; }
+	[ $DEBUG -ge 2 ] && echo "DEBUG2: RENEWFILE COMAND was set to \"$COMAND\""
 	
 	case "$MODE" in
 		"loadit")
-			echo "tobeimpemented: $1; mode \"$MODE\""
+			# delete the file
+			[ ! -e "$FILENAME" ] && { echo "ERROR: given file \"$FILENAME\" in RENEWFILE statement in line $LINECOUNTER does not exist. Aborting!"; exit 213; }
+			[ $DEBUG -ge 1 ] && echo "DEBUG: RENEWFILE is deleting \"$FILENAME\""
+			rm -f "$FILENAME"
 		;;
 		"shipit")
-			echo "tobeimpemented: $1; mode \"$MODE\""
+			# recreate the file if missing
+			if [ -e "$FILENAME" ] ;
+			then
+				 echo "INFO: RENEWFILE \"$FILENAME\" found, so just keeping it."
+			else
+				[ $DEBUG -ge 1 ] && echo "DEBUG: RENEWFILE is executing \"$COMMAND\""
+				$COMMAND
+			fi
 		;;
 		*)
 			echo "ERROR: internal error: in function \"parse_SETVAR_LINE\" variable mode did have an unknown value of \"$MODE\". Aborting!"

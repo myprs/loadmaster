@@ -8,7 +8,9 @@
 SETVAR Varname Value
 
 
-RENEWFILE File Method
+#RENEWFILE File Method
+RENEWFILE /tmp/renewme touch /tmp/renewme
+
 
 
 PUBLISHDIR Sourcedir Destdir
