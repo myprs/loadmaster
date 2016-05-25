@@ -4,8 +4,10 @@
 DEBUG=${DEBUG:-0}
 
 RSYNCBIN="/usr/bin/rsync"
-GREPBIN="/bin/grep"
+RSYNCOPTS="-a  --ignore-existing --progress"
 
+GREPBIN="/bin/grep"
+FINDBIN="/usr/bin/find"
 CALLNAME="`basename "$0"`"
 CALLDIR="`dirname "$0"`"
 
@@ -46,7 +48,8 @@ parse_RENEWFILE_line () {
 	local COMMAND="$*"
 	[ -z "$COMMAND" ] && { echo "ERROR: no command given in RENEWFILE statement in line $LINECOUNTER. Aborting!"; exit 212; }
 	[ $DEBUG -ge 2 ] && echo "DEBUG2: RENEWFILE COMAND was set to \"$COMAND\""
-	
+
+	# actions	
 	case "$MODE" in
 		"loadit")
 			# delete the file
@@ -61,7 +64,7 @@ parse_RENEWFILE_line () {
 				 echo "INFO: RENEWFILE \"$FILENAME\" found, so just keeping it."
 			else
 				[ $DEBUG -ge 1 ] && echo "DEBUG: RENEWFILE is executing \"$COMMAND\""
-				$COMMAND
+				eval $COMMAND
 			fi
 		;;
 		*)
@@ -93,12 +96,51 @@ parse_PUBLISHDIR_line () {
 
 	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_PUBLISHDIR_line\" should never be called with an empty parameter set. This should never happen by design. aborting!"; exit -220 ; }
 	
+	# parse 
+	shift
+	# normalise directory
+	local SRCDIR="`dirname "$1"`/`basename "$1"`"
+	[ -z "$SRCDIR" ] && { echo "ERROR: no source directory given in PUBLISHDIR statement in line $LINECOUNTER. Aborting!"; exit 221; }
+	[ $DEBUG -ge 2 ] && echo "DEBUG2: PUBLISHDIR SRCDIR was set to \"$SRCDIR\""
+
+	shift
+	# normalise directory
+	local DESTDIR="`dirname "$1"`/`basename "$1"`"
+	[ -z "$DESTDIR" ] && { echo "ERROR: no destination directory given in PUBLISHDIR statement in line $LINECOUNTER. Aborting!"; exit 222; }
+
+	shift
+	# check for excess information
+	[ -n "$1" ] && { echo "ERROR: superfluous characters \"$*\" at end of line $LINECOUNTER", Aborting; exit 223; }
+
+	[ $DEBUG -ge 2 ] && echo "DEBUG2: PUBLISHDIR COMAND was set to \"$DESTDIR\""
+
 	case "$MODE" in
 		"loadit")
-			echo "tobeimpemented: $1; mode \"$MODE\""
+			[ -d "$SRCDIR" ] || { echo "ERROR: no source directory \"$SRCDIR\" found. Aborting!"; exit 224; }
+			[ -d "$DESTDIR" ] || { mkdir -p "$DESTDIR"; echo "INFO: PUBLISHDIR: created destination directory \"$DESTDIR\"."; }
 		;;
 		"shipit")
-			echo "tobeimpemented: $1; mode \"$MODE\""
+			# rsync
+			"$RSYNCBIN" $RSYNCOPTS "$SRCDIR" "$DESTDIR"
+
+			if [ -d "$SRCDIR" ] ;
+			then
+				# remove source if not already a link to the right destination and link it 
+				rm -rf "$SRCDIR"
+				ln -s "$DESTDIR/`basename "$SRCDIR"`" "$SRCDIR" 
+			else
+				if [ -L "$SRCDIR" ] ;
+				then
+					# check if link points to the correct location
+					FOUND=`$FINDBIN / -name "$SRCDIR" -lname "^$DESTDIR$" | wc -l`
+					if [ $RESULT -ne 1 ] ;
+					then
+						# link points to the wrong location, abort!
+						echo "ERROR: PUBLISHDIR found that link \"$SRCDIR\" points to the wrong location. Please check manually. Aborting!"
+
+					fi
+				fi
+			fi
 		;;
 		*)
 			echo "ERROR: internal error: in function \"parse_PUBLISHDIR_line\" variable mode did have an unknown value of \"$MODE\". Aborting!"
@@ -233,7 +275,7 @@ runstartcmd () {
 		[ -z "$STARTCMD" ] && echo "WARNING: You seem not to have any STARTCMD line in your loadingplan! Please note that this is OK as long as you take care of starting a process in your container in your dockerfile. But please make sure that you also run loadmaster through the \"$STARTNAME\" link to make sure on every start of your container that defaults are moved and initialisations are done! Otherwise using loadmaster does not make any sense. Please see the docs on loadmaster for further information on how to use the script."
 	else
 		# run the command 
-		{ $STARTCMD ; }
+		eval $STARTCMD 
 	fi 
 
 }
