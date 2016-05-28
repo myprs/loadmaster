@@ -14,23 +14,24 @@ As these steps are quite simple, but need to be coordinated between the phases o
 
 ## Quick start
 
-Create a dockerfile:
- Install the software as required
- Add the ```loadmaster.sh``` script to your container
- Add a loadingplan file
-  Make sure to define your program call as a STARTCMD definition
-  Define how to recreate IDs and Keys
-  Define where to place the persistent configuration with PUBLISHDIR and PUBLISHFILE
- Run the ```loadmaster.sh``` script with your loadingplan in your image (this will create the startcontainer.sh link in your image)
- Mark the persistent directories as exportable in your dockerfile
- Make the ```startcontainer.sh``` your entrypoint in the Dockerfile
-Create an image
-Create a data-container
- Just create it, you can stop it immediately. It does not need to be started to hold the data and being accessible.
- You might want to run the container to configure the application to your needs.
-Create a runing container:
- make sure to import the directories from the data container
- Run it. If all goes well it inherits the configuration from your data container.
+1. Create a dockerfile:
+ * Install the software as required
+ * Add the ```loadmaster.sh``` script to your container
+ * Add a loadingplan file
+  * Make sure to define your program call as a STARTCMD definition
+  * Define how to recreate IDs and Keys
+  * Define where to place the persistent configuration with MOVEDIR and MOVEFILE
+ * Run the ```loadmaster.sh``` script with your loadingplan in your image (this will create the startcontainer.sh link in your image)
+ * Mark the persistent directories as exportable in your dockerfile
+ * Make the ```startcontainer.sh``` your entrypoint in the Dockerfile
+1. Create an image
+1. Create a data-container
+ * Just create it, you can stop it immediately. It does not need to be started to hold the data and being accessible.
+ * You might want to run the container to configure the application to your needs.
+1. Create a runing container:
+ * Make sure to import the directories from the data container.
+ * Make sure you do create the continer with the same parameters. 
+ * Run it. If all goes well it inherits the configuration from your data container.
 
 The last step should be repeatable, always giving you the same results.
 
