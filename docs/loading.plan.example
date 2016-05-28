@@ -1,0 +1,49 @@
+# this is an comment
+ # this also is a comment indented by an single space
+  # this also is a comment indented by multiple spaces
+	# this is a comment indented by an tab
+	 # this is a comment indented by an tab and an space
+
+# not implemented yet, just for testing purposes
+SETVAR Varname Value
+
+
+#RENEWFILE File Method
+RENEWFILE /tmp/renewme date >/tmp/renewme; 
+
+
+
+# Publish contents from a source directory to a destination directory.
+# On image creation just do some checks for consistency.
+# On container start do:
+# * Copy the contents from the source to the destination, if not already present. 
+# * Do not overwrite changes in hte destination. 
+# * If the source is not a link to the destination, remove the source directory 
+#   and create a soflink to the destination directory instead.
+# 
+# given the Line:
+#
+#PUBLISHDIR /etc/bar /data/foo
+#
+# will end up with a Directory /data/foo/bar with al the contents, and
+# /etc/bar being a softlink pointing to /data/foo/bar
+#
+#PUBLISHDIR Sourcedirectory Destinationdirectory
+PUBLISHDIR /etc/loadmaster/ /tmp/loadmastertest/
+
+
+PUBLISHFILE Sourcefile Destdir
+
+
+# Define a command that will be run in the container at the end, when all other tasks are done.  
+# This is meant to start the actual container functionality as usually done in docker containers.
+# This operator can only be defined once in a loadingplan. Multiple definitions will abort loadmaster
+# already at image creation time.
+# This definition might be omitted, but this is strongly discouraged.
+#STARTCMD Cmd [Param [Param [...]]]
+STARTCMD echo "Hallo World"
+
+
+
+   
+  			
