@@ -74,9 +74,9 @@ parse_RENEWFILE_line () {
 	
 }
 
-parse_PUBLISHFILE_line () {
+parse_MOVEFILE_line () {
 
-	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_PUBLISHFILE_line\" should never be called with an empty parameter set. This should never happen by design. aborting!"; exit -220 ; }
+	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_MOVEFILE_line\" should never be called with an empty parameter set. This should never happen by design. aborting!"; exit -220 ; }
 	
 	case "$MODE" in
 		"loadit")
@@ -86,38 +86,38 @@ parse_PUBLISHFILE_line () {
 			echo "tobeimpemented: $1; mode \"$MODE\""
 		;;
 		*)
-			echo "ERROR: internal error: in function \"parse_PUBLISHFILE_line\" variable mode did have an unknown value of \"$MODE\". Aborting!"
+			echo "ERROR: internal error: in function \"parse_MOVEFILE_line\" variable mode did have an unknown value of \"$MODE\". Aborting!"
 		;;
 	esac
 	
 }
 
-parse_PUBLISHDIR_line () {
+parse_MOVEDIR_line () {
 
-	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_PUBLISHDIR_line\" should never be called with an empty parameter set. This should never happen by design. aborting!"; exit -220 ; }
+	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_MOVEDIR_line\" should never be called with an empty parameter set. This should never happen by design. aborting!"; exit -220 ; }
 	
 	# parse 
 	shift
 	# normalise directory
 	local SRCDIR="`dirname "$1"`/`basename "$1"`"
-	[ -z "$SRCDIR" ] && { echo "ERROR: no source directory given in PUBLISHDIR statement in line $LINECOUNTER. Aborting!"; exit 221; }
-	[ $DEBUG -ge 2 ] && echo "DEBUG2: PUBLISHDIR SRCDIR was set to \"$SRCDIR\""
+	[ -z "$SRCDIR" ] && { echo "ERROR: no source directory given in MOVEDIR statement in line $LINECOUNTER. Aborting!"; exit 221; }
+	[ $DEBUG -ge 2 ] && echo "DEBUG2: MOVEDIR SRCDIR was set to \"$SRCDIR\""
 
 	shift
 	# normalise directory
 	local DESTDIR="`dirname "$1"`/`basename "$1"`"
-	[ -z "$DESTDIR" ] && { echo "ERROR: no destination directory given in PUBLISHDIR statement in line $LINECOUNTER. Aborting!"; exit 222; }
+	[ -z "$DESTDIR" ] && { echo "ERROR: no destination directory given in MOVEDIR statement in line $LINECOUNTER. Aborting!"; exit 222; }
 
 	shift
 	# check for excess information
 	[ -n "$1" ] && { echo "ERROR: superfluous characters \"$*\" at end of line $LINECOUNTER", Aborting; exit 223; }
 
-	[ $DEBUG -ge 2 ] && echo "DEBUG2: PUBLISHDIR COMAND was set to \"$DESTDIR\""
+	[ $DEBUG -ge 2 ] && echo "DEBUG2: MOVEDIR COMAND was set to \"$DESTDIR\""
 
 	case "$MODE" in
 		"loadit")
 			[ -d "$SRCDIR" ] || { echo "ERROR: no source directory \"$SRCDIR\" found. Aborting!"; exit 224; }
-			[ -d "$DESTDIR" ] || { mkdir -p "$DESTDIR"; echo "INFO: PUBLISHDIR: created destination directory \"$DESTDIR\"."; }
+			[ -d "$DESTDIR" ] || { mkdir -p "$DESTDIR"; echo "INFO: MOVEDIR: created destination directory \"$DESTDIR\"."; }
 		;;
 		"shipit")
 			# rsync
@@ -136,14 +136,14 @@ parse_PUBLISHDIR_line () {
 					if [ $RESULT -ne 1 ] ;
 					then
 						# link points to the wrong location, abort!
-						echo "ERROR: PUBLISHDIR found that link \"$SRCDIR\" points to the wrong location. Please check manually. Aborting!"
+						echo "ERROR: MOVEDIR found that link \"$SRCDIR\" points to the wrong location. Please check manually. Aborting!"
 
 					fi
 				fi
 			fi
 		;;
 		*)
-			echo "ERROR: internal error: in function \"parse_PUBLISHDIR_line\" variable mode did have an unknown value of \"$MODE\". Aborting!"
+			echo "ERROR: internal error: in function \"parse_MOVEDIR_line\" variable mode did have an unknown value of \"$MODE\". Aborting!"
 		;;
 	esac
 	
@@ -190,11 +190,11 @@ processline () {
 		"RENEWFILE")
 			parse_RENEWFILE_line $*
 		;;
-		"PUBLISHFILE")
-			parse_PUBLISHFILE_line $*
+		"MOVEFILE")
+			parse_MOVEFILE_line $*
 		;;
-		"PUBLISHDIR")
-			parse_PUBLISHDIR_line $*
+		"MOVEDIR")
+			parse_MOVEDIR_line $*
 		;;
 		"STARTCMD")
 			parse_STARTCMD_line $*

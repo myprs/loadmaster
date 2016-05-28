@@ -12,6 +12,12 @@ SETVAR Varname Value
 RENEWFILE /tmp/renewme date >/tmp/renewme; 
 
 
+# You might not want to move whole directories including all contents, but be very specific about 
+# what file to save. Use this statement for doing so.
+#MOVEDIR Sourcedirectory Destinationdirectory
+MOVEDIR /etc/loadmaster/ /tmp/loadmastertest/
+
+
 
 # Publish contents from a source directory to a destination directory.
 # On image creation just do some checks for consistency.
@@ -23,16 +29,12 @@ RENEWFILE /tmp/renewme date >/tmp/renewme;
 # 
 # given the Line:
 #
-#PUBLISHDIR /etc/bar /data/foo
+#MOVEDIR /etc/bar /data/foo
 #
 # will end up with a Directory /data/foo/bar with al the contents, and
 # /etc/bar being a softlink pointing to /data/foo/bar
 #
-#PUBLISHDIR Sourcedirectory Destinationdirectory
-PUBLISHDIR /etc/loadmaster/ /tmp/loadmastertest/
-
-
-PUBLISHFILE Sourcefile Destdir
+MOVEFILE Sourcefile Destdir
 
 
 # Define a command that will be run in the container at the end, when all other tasks are done.  
