@@ -76,20 +76,48 @@ parse_RENEWFILE_line () {
 
 parse_MOVEFILE_line () {
 
-	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_MOVEFILE_line\" should never be called with an empty parameter set. This should never happen by design. aborting!"; exit -220 ; }
-	
+	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"parse_MOVEFILE_line\" should never be called with an empty parameter set. This should never happen by design. aborting!"; exit -240 ; }
+
+	# parse 
+	shift
+	local SRCFILE="$1"
+	[ -z "$SRCFILE" ] && { echo "ERROR: no source file given in MOVEFILE statement in line $LINECOUNTER. Aborting!"; exit 241; }
+	[ $DEBUG -ge 2 ] && echo "DEBUG2: MOVEFILE SRCFILE was set to \"$SRCFILE\""
+
+	shift
+	# normalise directory
+	local DESTDIR="`dirname "$1"`/`basename "$1"`"
+	[ -z "$DESTDIR" ] && { echo "ERROR: no destination directory given in MOVEFILE statement in line $LINECOUNTER. Aborting!"; exit 242; }
+
+	shift
+	# check for excess information
+	[ -n "$1" ] && { echo "ERROR: superfluous characters \"$*\" at end of line $LINECOUNTER", Aborting; exit 243; }
+
+	[ $DEBUG -ge 2 ] && echo "DEBUG2: MOVEDIR COMAND was set to \"$DESTDIR\""
+
 	case "$MODE" in
 		"loadit")
-			echo "tobeimpemented: $1; mode \"$MODE\""
+			[ -d "$SRCFILE" ] && { echo "ERROR: source file \"$SRCFILE\ must not be a directory. Aborting!"; exit 244; }
+			[ -L "$SRCFILE" ] && { echo "ERROR: source file \"$SRCFILE\ must not be a link. Aborting!"; exit 245; }
+			[ -r "$SRCFILE" ] || { echo "ERROR: no source file \"$SRCFILE\" found or inaccessible for me. Aborting!"; exit 246; }
+			[ -d "$DESTDIR" ] || { mkdir -p "$DESTDIR"; echo "INFO: MOVEDIR: created destination directory \"$DESTDIR\"."; }
 		;;
 		"shipit")
-			echo "tobeimpemented: $1; mode \"$MODE\""
+			[ -L "$SRCFILE" ] && { echo "ERROR: source file \"$SRCFILE\ must not be a link. Aborting!"; exit 245; }
+			
+			# move file to destination
+			[ $DEBUG -ge 2 ] && echo "DEBUG2: MOVEDIR COMAND: moving file \"$SRCFILE\" to \"$DESTDIR\""
+			mv "$SRCFILE" "$DESTDIR/."
+
+			# create link
+			[ $DEBUG -ge 2 ] && echo "DEBUG2: MOVEDIR COMAND: linked \"$SRCFILE\" to \"$DESTDIR/`basename "$SRCFILE"`\""
+			ln -s "$DESTDIR/`basename "$SRCFILE"`" "$SRCFILE"
 		;;
 		*)
 			echo "ERROR: internal error: in function \"parse_MOVEFILE_line\" variable mode did have an unknown value of \"$MODE\". Aborting!"
 		;;
 	esac
-	
+
 }
 
 parse_MOVEDIR_line () {
@@ -116,7 +144,7 @@ parse_MOVEDIR_line () {
 
 	case "$MODE" in
 		"loadit")
-			[ -d "$SRCDIR" ] || { echo "ERROR: no source directory \"$SRCDIR\" found. Aborting!"; exit 224; }
+			[ -d "$SRCDIR" ] || { echo "ERROR: source directory \"$SRCDIR\" in MOVEDIR statement in line $LINECOUNTER found. Aborting!"; exit 224; }
 			[ -d "$DESTDIR" ] || { mkdir -p "$DESTDIR"; echo "INFO: MOVEDIR: created destination directory \"$DESTDIR\"."; }
 		;;
 		"shipit")
