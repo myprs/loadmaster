@@ -3,6 +3,8 @@
 
 DEBUG=${DEBUG:-0}
 
+CMDEXCLUDELIST="/tmp/`basename "$0"`.excludes.$$.tmp"
+
 RSYNCBIN="/usr/bin/rsync"
 RSYNCOPTS="-a  --ignore-existing --progress"
 
@@ -211,6 +213,9 @@ processline () {
 
 	[ -z "$1" ] && { echo "ERROR: Internal Error: Function \"processline\" should never be called with an empty parameter set. This should never happen by design. aborting!"; exit -100 ; }
 
+	# if command is in excludelist, do not process yet but return
+	[ -r "$CMDEXCLUDELIST" ] && $GREPBIN "$1" "$CMDEXCLUDELIST" >/dev/null && return 0
+
 	case "$1" in 
 		"SETVAR")
 			parse_SETVAR_line $*
@@ -315,9 +320,26 @@ checkprerequisites $1
 case "$CALLNAME" in 
 	"loadmaster.sh")
 		MODE=loadit
+
+		# Delay processing of RENEWFILE
+		echo "RENEWFILE">"$CMDEXCLUDELIST"
+		readloadingplan
+
+		# now just execute the RENEWFILE
+		echo "SETVAR\nMOVEFILE\nMOVEDIR\nSTARTCMD">"$CMDEXCLUDELIST"
+		readloadingplan
 	;;
 	"$STARTNAME")
 		MODE=shipit
+
+		# first only execute the RENEWFILE to have the files complete
+		echo "SETVAR\nMOVEFILE\nMOVEDIR\nSTARTCMD">"$CMDEXCLUDELIST"
+		readloadingplan
+		
+		# then run the other tasks except for RENEWFILE
+		echo "RENEWFILE">"$CMDEXCLUDELIST"
+		readloadingplan
+
 	;;
 	*)
 		echo "ERROR: Unknown callname \"$CALLNAME\". Aborting!"
@@ -325,8 +347,8 @@ case "$CALLNAME" in
 	;;
 esac
 
-readloadingplan
 
+[ -f "$CMDEXCLUDELIST" ] && rm "$CMDEXCLUDELIST"
 
 runstartcmd
 
